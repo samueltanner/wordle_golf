@@ -92,7 +92,7 @@ class ScoreViewSet(viewsets.ModelViewSet):
             r.message(message)
             return r
         elif message_array[0].lower() == 'roast' and message_array[1].lower() == 'mitch':
-            to = "18054900978"
+            to = os.environ.get('MITCH_PHONE_NUMBER', None)
             message = "Hey Mitch you %s! How are those chicken legs? Sent with love from: %s" % (
                 self.roast(), user.username)
             client = Client(os.environ.get('TWILIO_ACCOUNT_SID', None),
