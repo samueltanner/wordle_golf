@@ -100,8 +100,8 @@ class ScoreViewSet(viewsets.ModelViewSet):
             response = client.messages.create(
                 body=message,
                 to=to, from_=os.environ.get('TWILIO_PHONE_NUMBER', None))
-
-            return response
+            r.message("Congrats, you roasted Mitch.")
+            return (response, r)
         else:
             r.message(
                 'Please text the result of the "Share" button from Wordle.com')
