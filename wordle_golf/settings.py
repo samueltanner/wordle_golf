@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_crontab'
 
 ]
 
@@ -157,3 +158,7 @@ STATIC_URL = '/static/'
 #         'rest_framework.renderers.JSONRenderer',
 #     )
 # }
+
+CRONJOBS = [
+    ('* 17 * * *', 'myapp.cron.remind_users_to_submit_scores', '>> myapi/cronlog.log')
+]

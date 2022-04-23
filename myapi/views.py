@@ -6,7 +6,7 @@ from rest_framework import viewsets
 from .serializers import GolfGroupSerializer, UserAPISerializer, UserSerializer, ScoreSerializer
 from .models import User, Score, GolfGroup
 from twilio.twiml.messaging_response import MessagingResponse
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 import random
 from .resources.words import adjectives, nouns, body_parts
 from twilio.rest import Client
@@ -116,7 +116,7 @@ class ScoreViewSet(viewsets.ModelViewSet):
     def get_own_score(self, user):
         r = MessagingResponse()
         score_sum = 0
-        today = date.today()
+        today = datetime.utcnow() - timedelta(hours=8)
         start = today - timedelta(days=today.weekday())
         end = start + timedelta(days=6)
         scores = Score.objects.filter(
