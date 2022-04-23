@@ -9,6 +9,9 @@ from twilio.twiml.messaging_response import MessagingResponse
 from datetime import date, timedelta
 import random
 from .resources.words import adjectives, nouns
+from twilio.rest import Client
+import os
+from rest_framework import permissions
 
 
 # Create your views here.
@@ -16,8 +19,19 @@ from .resources.words import adjectives, nouns
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('username')
-    # serializer_class = UserSerializer
-    serializer_class = UserAPISerializer
+    serializer_class = UserSerializer
+    # serializer_class = UserAPISerializer
+
+    def get_permissions(self):
+        if self.action == 'list':
+            self.permission_classes = [IsSuperUser, ]
+        return super(self.__class__, self).get_permissions()
+
+
+class IsSuperUser(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        return request.user and request.user.is_superuser
 
 
 class ScoreViewSet(viewsets.ModelViewSet):
@@ -78,10 +92,16 @@ class ScoreViewSet(viewsets.ModelViewSet):
             r.message(message)
             return r
         elif message_array[0].lower() == 'roast' and message_array[1].lower() == 'mitch':
-            message = "Hey Mitch you %s! Sent with love from: %s" % (
+            to = "18054900978"
+            message = "Hey Mitch you %s! How are those chicken legs? Sent with love from: %s" % (
                 self.roast(), user.username)
-            r.message(to="13608780730", body=message)
-            return r
+            client = Client(os.environ.get('TWILIO_ACCOUNT_SID', None),
+                            os.environ.get('TWILIO_AUTH_TOKEN', None))
+            response = client.messages.create(
+                body=message,
+                to=to, from_=os.environ.get('TWILIO_PHONE_NUMBER', None))
+
+            return response
         else:
             r.message(
                 'Please text the result of the "Share" button from Wordle.com')
@@ -140,11 +160,6 @@ class ScoreViewSet(viewsets.ModelViewSet):
                 return "Your performance is astoundingly lacking, you %s %s. Your score was recorded." % (adj, n)
             if score == "7":
                 return "Hahahahahahaha! Your score was recorded."
-
-    def roast_mitch_specifically(self):
-        r = MessagingResponse()
-        r.message(to="13608780730", body="DOES THIS WORK")
-        return r
 
 
 class GolfGroupViewSet(viewsets.ModelViewSet):
