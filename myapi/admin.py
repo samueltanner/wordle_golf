@@ -5,4 +5,9 @@ from django.contrib.auth.admin import UserAdmin
 
 admin.site.register(Score)
 admin.site.register(GolfGroup)
+
+fields = list(UserAdmin.fieldsets)
+fields[0] = (None, {'fields': ('username', 'password', 'phone_number')})
+UserAdmin.fieldsets = tuple(fields)
+
 admin.site.register(User, UserAdmin)

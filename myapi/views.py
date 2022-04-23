@@ -14,6 +14,7 @@ from datetime import date, timedelta
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('username')
+    # serializer_class = UserSerializer
     serializer_class = UserAPISerializer
 
 
