@@ -7,6 +7,8 @@ from .serializers import GolfGroupSerializer, UserAPISerializer, UserSerializer,
 from .models import User, Score, GolfGroup
 from twilio.twiml.messaging_response import MessagingResponse
 from datetime import date, timedelta
+import random
+from .resources.words import adjectives, nouns
 
 
 # Create your views here.
@@ -49,29 +51,36 @@ class ScoreViewSet(viewsets.ModelViewSet):
                 game_score = 7
 
             if self.check_game(user, game_number):
-                r.message(
-                    'Alright you trigger happy little shit! You already submitted your score today. No take backsies!')
+                message = 'Alright you trigger-happy, %s! You already submitted your score today. No take backsies!' % (
+                    self.roast())
+                r.message(message)
                 return r
 
             score = Score.objects.create(
                 game_number=game_number, score=game_score, user=user)
             score.save()
 
-            r.message('Thank you for submitting your score')
+            r.message(self.roast(game_score))
             return r
         elif message_array[0].lower() == 'score':
             score = self.get_own_score(user)
-            message = "Hey %s, how's it going you fucking dunce? You are %s for the week" % (
-                user.username, score)
+            message = "Hey %s, how's it going you %s? You are %s for the week" % (
+                user.username, self.roast(), score)
             r.message(message)
             return r
         elif message_array[0].lower() == 'scoreboard':
-            message = "Here comes the shortbus, it's a wonder any of you can even read: "
+            message = "Here comes the shortbus, you all are a bunch of %ss: " % (
+                self.roast())
             group_score_dict = self.get_group_score(1)
             print(group_score_dict)
             for key, value in group_score_dict.items():
                 message += "%s: %s, " % (key, value)
             r.message(message)
+            return r
+        elif message_array[0].lower() == 'roast' and message_array[1].lower() == 'mitch':
+            message = "Hey Mitch you %s! Sent with love from: %s" % (
+                self.roast(), user.username)
+            r.message(to="13608780730", body=message)
             return r
         else:
             r.message(
@@ -111,8 +120,31 @@ class ScoreViewSet(viewsets.ModelViewSet):
 
         return group_score_dict
 
-    def roast(score):
-        hello
+    def roast(self, score=False):
+        adj = random.choice(adjectives)
+        n = random.choice(nouns)
+        if not score:
+            return "%s %s" % (adj, n)
+        if score:
+            if score == "1":
+                return "Wow, so you cheated, way to go you %s %s. Your score was recorded." % (adj, n)
+            if score == "2":
+                return "You must think you are one smart, %s %s. Your score was recorded." % (adj, n)
+            if score == "3":
+                return "Congrats you average %s %s. Your score was recorded." % (adj, n)
+            if score == "4":
+                return "I'm not surprised you couldn't do better. Your score was recorded."
+            if score == "5":
+                return "Was that really hard for you? Your score was recorded."
+            if score == "6":
+                return "Your performance is astoundingly lacking, you %s %s. Your score was recorded." % (adj, n)
+            if score == "7":
+                return "Hahahahahahaha! Your score was recorded."
+
+    def roast_mitch_specifically(self):
+        r = MessagingResponse()
+        r.message(to="13608780730", body="DOES THIS WORK")
+        return r
 
 
 class GolfGroupViewSet(viewsets.ModelViewSet):
