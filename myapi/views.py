@@ -3,7 +3,7 @@ from http.client import responses
 from django_twilio.decorators import twilio_view
 from django.shortcuts import render
 from rest_framework import viewsets
-from .serializers import GolfGroupSerializer, UserSerializer, ScoreSerializer
+from .serializers import GolfGroupSerializer, UserAPISerializer, UserSerializer, ScoreSerializer
 from .models import User, Score, GolfGroup
 from twilio.twiml.messaging_response import MessagingResponse
 from datetime import date, timedelta
@@ -14,7 +14,7 @@ from datetime import date, timedelta
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('username')
-    serializer_class = UserSerializer
+    serializer_class = UserAPISerializer
 
 
 class ScoreViewSet(viewsets.ModelViewSet):

@@ -8,10 +8,10 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('username', 'id', 'phone_number')
 
 
-# class ScoreApiSerializer(serializers.HyperlinkedModelSerializer):
-#     class Meta:
-#         model = Score
-#         fields = ('game_number', 'score', 'user', 'created_at')
+class UserAPISerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = User
+        fields = ('username', 'id')
 
 
 class ScoreSerializer(serializers.HyperlinkedModelSerializer):
