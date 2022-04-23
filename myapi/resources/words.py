@@ -114,3 +114,14 @@ nouns = ["airhead",
          "ass clown",
          "waste of air"
          ]
+
+body_parts = [
+    "small arms",
+    "skinny legs",
+    "chicken sticks",
+    "twig legs",
+    "twig arms",
+    "muscleless appendages",
+    "breakable ankles",
+    "wispy ankles"
+]

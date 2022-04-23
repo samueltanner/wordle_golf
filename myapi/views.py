@@ -8,7 +8,7 @@ from .models import User, Score, GolfGroup
 from twilio.twiml.messaging_response import MessagingResponse
 from datetime import date, timedelta
 import random
-from .resources.words import adjectives, nouns
+from .resources.words import adjectives, nouns, body_parts
 from twilio.rest import Client
 import os
 from rest_framework import permissions
@@ -93,15 +93,15 @@ class ScoreViewSet(viewsets.ModelViewSet):
             return r
         elif message_array[0].lower() == 'roast' and message_array[1].lower() == 'mitch':
             to = os.environ.get('MITCH_PHONE_NUMBER', None)
-            message = "Hey Mitch you %s! How are those chicken legs? Sent with love from: %s" % (
-                self.roast(), user.username)
+            message = "Hey Mitch, you %s! How are those %s? Sent with love from, %s" % (
+                self.roast(), random.choice(body_parts), user.username)
             client = Client(os.environ.get('TWILIO_ACCOUNT_SID', None),
                             os.environ.get('TWILIO_AUTH_TOKEN', None))
-            response = client.messages.create(
+            client.messages.create(
                 body=message,
                 to=to, from_=os.environ.get('TWILIO_PHONE_NUMBER', None))
             r.message("Congrats, you roasted Mitch.")
-            return (response, r)
+            return r
         else:
             r.message(
                 'Please text the result of the "Share" button from Wordle.com')
